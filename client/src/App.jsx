@@ -166,211 +166,167 @@ function App() {
                             </button>
                         </div>
 
-                        {/* Filters */}
-                        <div className="glass-panel" style={{ padding: '1.5rem', marginBottom: '2rem', display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
-                            <div style={{ position: 'relative', flex: 1, minWidth: '200px' }}>
-                                <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-text-muted)' }} />
-                                <input
-                                    type="text"
-                                    placeholder="Search names..."
-                                    value={filters.search}
-                                    onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-                                    style={{
-                                        width: '100%',
-                                        padding: '10px 10px 10px 40px',
-                                        borderRadius: '8px',
-                                        border: '1px solid var(--glass-border)',
-                                        background: 'rgba(0,0,0,0.2)',
-                                        color: '#fff'
-                                    }}
-                                />
-                            </div>
 
-                            <select
-                                value={filters.gender}
-                                onChange={(e) => setFilters({ ...filters, gender: e.target.value })}
-                                style={{ padding: '10px', borderRadius: '8px', background: 'rgba(0,0,0,0.2)', color: '#fff', border: '1px solid var(--glass-border)' }}
-                            >
-                                <option value="">All Genders</option>
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
-                            </select>
 
-                            <select
-                                value={filters.origin}
-                                onChange={(e) => setFilters({ ...filters, origin: e.target.value })}
-                                style={{ padding: '10px', borderRadius: '8px', background: 'rgba(0,0,0,0.2)', color: '#fff', border: '1px solid var(--glass-border)' }}
-                            >
-                                <option value="">All Origins</option>
-                                <option value="Latin">Latin</option>
-                                <option value="Greek">Greek</option>
-                                <option value="Hebrew">Hebrew</option>
-                                <option value="German">German</option>
-                                <option value="French">French</option>
-                                <option value="English">English</option>
-                                <option value="Irish">Irish</option>
-                                <option value="Chinese">Chinese</option>
-                            </select>
+                        {generatorType === 'english' && (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', width: '100%' }}>
 
-                            {generatorType === 'english' && (
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', width: '100%' }}>
-
-                                    {/* Gender Section */}
-                                    <div className="glass-panel" style={{ padding: '1.5rem' }}>
-                                        <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.1rem' }}>
-                                            <span style={{ color: 'var(--color-accent)' }}>1.</span> Select Gender
-                                        </h3>
-                                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
-                                            {['Female', 'Male', ''].map(g => (
-                                                <button
-                                                    key={g || 'all'}
-                                                    onClick={() => setFilters({ ...filters, gender: g.toLowerCase() })}
-                                                    style={{
-                                                        padding: '1rem',
-                                                        borderRadius: '12px',
-                                                        border: '1px solid var(--glass-border)',
-                                                        background: filters.gender === g.toLowerCase() ? 'var(--color-primary)' : 'rgba(255,255,255,0.05)',
-                                                        color: filters.gender === g.toLowerCase() ? '#000' : '#fff',
-                                                        fontWeight: '600',
-                                                        transition: 'all 0.2s'
-                                                    }}
-                                                >
-                                                    {g || 'All Genders'}
-                                                </button>
-                                            ))}
-                                        </div>
+                                {/* Gender Section */}
+                                <div className="glass-panel" style={{ padding: '1.5rem' }}>
+                                    <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.1rem' }}>
+                                        <span style={{ color: 'var(--color-accent)' }}>1.</span> Select Gender
+                                    </h3>
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
+                                        {['Female', 'Male', ''].map(g => (
+                                            <button
+                                                key={g || 'all'}
+                                                onClick={() => setFilters({ ...filters, gender: g.toLowerCase() })}
+                                                style={{
+                                                    padding: '1rem',
+                                                    borderRadius: '12px',
+                                                    border: '1px solid var(--glass-border)',
+                                                    background: filters.gender === g.toLowerCase() ? 'var(--color-primary)' : 'rgba(255,255,255,0.05)',
+                                                    color: filters.gender === g.toLowerCase() ? '#000' : '#fff',
+                                                    fontWeight: '600',
+                                                    transition: 'all 0.2s'
+                                                }}
+                                            >
+                                                {g || 'All Genders'}
+                                            </button>
+                                        ))}
                                     </div>
-
-                                    {/* Theme Section */}
-                                    <div className="glass-panel" style={{ padding: '1.5rem' }}>
-                                        <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.1rem' }}>
-                                            <span style={{ color: 'var(--color-accent)' }}>2.</span> Choose a Theme
-                                        </h3>
-                                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '1rem' }}>
-                                            {[
-                                                { id: 'Nature', icon: <Leaf size={20} /> },
-                                                { id: 'Royal', icon: <Crown size={20} /> },
-                                                { id: 'Classic', icon: <BookOpen size={20} /> },
-                                                { id: 'Vintage', icon: <Hourglass size={20} /> },
-                                                { id: 'Literature', icon: <Feather size={20} /> },
-                                                { id: 'Celestial', icon: <Star size={20} /> },
-                                                { id: 'Cute', icon: <Smile size={20} /> },
-                                                { id: 'Flowers', icon: <Flower2 size={20} /> },
-                                                { id: 'Color', icon: <Palette size={20} /> },
-                                                { id: 'Unique', icon: <Sparkles size={20} /> },
-                                            ].map(theme => (
-                                                <button
-                                                    key={theme.id}
-                                                    onClick={() => setFilters({ ...filters, theme: filters.theme === theme.id ? '' : theme.id })}
-                                                    style={{
-                                                        padding: '1rem 0.5rem',
-                                                        borderRadius: '12px',
-                                                        border: '1px solid var(--glass-border)',
-                                                        background: filters.theme === theme.id ? 'var(--color-secondary)' : 'rgba(255,255,255,0.05)',
-                                                        color: '#fff',
-                                                        display: 'flex',
-                                                        flexDirection: 'column',
-                                                        alignItems: 'center',
-                                                        gap: '0.5rem',
-                                                        fontSize: '0.9rem'
-                                                    }}
-                                                >
-                                                    {theme.icon}
-                                                    {theme.id}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    {/* Other Filters Section (Collapsible-ish look) */}
-                                    <div className="glass-panel" style={{ padding: '1.5rem' }}>
-                                        <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.1rem' }}>
-                                            <span style={{ color: 'var(--color-accent)' }}>3.</span> Refine Search
-                                        </h3>
-                                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
-
-                                            {/* Origin */}
-                                            <div>
-                                                <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>Origin</label>
-                                                <select
-                                                    value={filters.origin}
-                                                    onChange={(e) => setFilters({ ...filters, origin: e.target.value })}
-                                                    style={{ width: '100%', padding: '12px', borderRadius: '8px', background: 'rgba(0,0,0,0.2)', color: '#fff', border: '1px solid var(--glass-border)' }}
-                                                >
-                                                    <option value="">All Origins</option>
-                                                    <option value="Latin">Latin</option>
-                                                    <option value="Greek">Greek</option>
-                                                    <option value="Hebrew">Hebrew</option>
-                                                    <option value="German">German</option>
-                                                    <option value="French">French</option>
-                                                    <option value="English">English</option>
-                                                    <option value="Irish">Irish</option>
-                                                </select>
-                                            </div>
-
-                                            {/* Length */}
-                                            <div>
-                                                <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>Length</label>
-                                                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                                    {['short', 'medium', 'long'].map(l => (
-                                                        <button
-                                                            key={l}
-                                                            onClick={() => setFilters({ ...filters, length: filters.length === l ? '' : l })}
-                                                            style={{
-                                                                flex: 1,
-                                                                padding: '10px',
-                                                                borderRadius: '8px',
-                                                                border: '1px solid var(--glass-border)',
-                                                                background: filters.length === l ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)',
-                                                                color: '#fff',
-                                                                fontSize: '0.8rem',
-                                                                textTransform: 'capitalize'
-                                                            }}
-                                                        >
-                                                            {l}
-                                                        </button>
-                                                    ))}
-                                                </div>
-                                            </div>
-
-                                            {/* First Letter */}
-                                            <div>
-                                                <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>First Letter</label>
-                                                <input
-                                                    type="text"
-                                                    placeholder="A-Z"
-                                                    maxLength={1}
-                                                    value={filters.firstLetter}
-                                                    onChange={(e) => setFilters({ ...filters, firstLetter: e.target.value })}
-                                                    style={{
-                                                        width: '100%',
-                                                        padding: '12px',
-                                                        borderRadius: '8px',
-                                                        border: '1px solid var(--glass-border)',
-                                                        background: 'rgba(0,0,0,0.2)',
-                                                        color: '#fff',
-                                                        textAlign: 'center',
-                                                        textTransform: 'uppercase'
-                                                    }}
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Generate Button */}
-                                    <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-                                        <button
-                                            className="btn-primary"
-                                            onClick={fetchNames} // Explicitly trigger fetch/scroll
-                                            style={{ minWidth: '200px', fontSize: '1.2rem' }}
-                                        >
-                                            Find Names
-                                        </button>
-                                    </div>
-
                                 </div>
-                            )}
-                        </div>
+
+                                {/* Theme Section */}
+                                <div className="glass-panel" style={{ padding: '1.5rem' }}>
+                                    <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.1rem' }}>
+                                        <span style={{ color: 'var(--color-accent)' }}>2.</span> Choose a Theme
+                                    </h3>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '1rem' }}>
+                                        {[
+                                            { id: 'Nature', icon: <Leaf size={20} /> },
+                                            { id: 'Royal', icon: <Crown size={20} /> },
+                                            { id: 'Classic', icon: <BookOpen size={20} /> },
+                                            { id: 'Vintage', icon: <Hourglass size={20} /> },
+                                            { id: 'Literature', icon: <Feather size={20} /> },
+                                            { id: 'Celestial', icon: <Star size={20} /> },
+                                            { id: 'Cute', icon: <Smile size={20} /> },
+                                            { id: 'Flowers', icon: <Flower2 size={20} /> },
+                                            { id: 'Color', icon: <Palette size={20} /> },
+                                            { id: 'Unique', icon: <Sparkles size={20} /> },
+                                        ].map(theme => (
+                                            <button
+                                                key={theme.id}
+                                                onClick={() => setFilters({ ...filters, theme: filters.theme === theme.id ? '' : theme.id })}
+                                                style={{
+                                                    padding: '1rem 0.5rem',
+                                                    borderRadius: '12px',
+                                                    border: '1px solid var(--glass-border)',
+                                                    background: filters.theme === theme.id ? 'var(--color-secondary)' : 'rgba(255,255,255,0.05)',
+                                                    color: '#fff',
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    alignItems: 'center',
+                                                    gap: '0.5rem',
+                                                    fontSize: '0.9rem'
+                                                }}
+                                            >
+                                                {theme.icon}
+                                                {theme.id}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Other Filters Section (Collapsible-ish look) */}
+                                <div className="glass-panel" style={{ padding: '1.5rem' }}>
+                                    <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.1rem' }}>
+                                        <span style={{ color: 'var(--color-accent)' }}>3.</span> Refine Search
+                                    </h3>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
+
+                                        {/* Origin */}
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>Origin</label>
+                                            <select
+                                                value={filters.origin}
+                                                onChange={(e) => setFilters({ ...filters, origin: e.target.value })}
+                                                style={{ width: '100%', padding: '12px', borderRadius: '8px', background: 'rgba(0,0,0,0.2)', color: '#fff', border: '1px solid var(--glass-border)' }}
+                                            >
+                                                <option value="">All Origins</option>
+                                                <option value="Latin">Latin</option>
+                                                <option value="Greek">Greek</option>
+                                                <option value="Hebrew">Hebrew</option>
+                                                <option value="German">German</option>
+                                                <option value="French">French</option>
+                                                <option value="English">English</option>
+                                                <option value="Irish">Irish</option>
+                                            </select>
+                                        </div>
+
+                                        {/* Length */}
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>Length</label>
+                                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                                {['short', 'medium', 'long'].map(l => (
+                                                    <button
+                                                        key={l}
+                                                        onClick={() => setFilters({ ...filters, length: filters.length === l ? '' : l })}
+                                                        style={{
+                                                            flex: 1,
+                                                            padding: '10px',
+                                                            borderRadius: '8px',
+                                                            border: '1px solid var(--glass-border)',
+                                                            background: filters.length === l ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)',
+                                                            color: '#fff',
+                                                            fontSize: '0.8rem',
+                                                            textTransform: 'capitalize'
+                                                        }}
+                                                    >
+                                                        {l}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        {/* First Letter */}
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>First Letter</label>
+                                            <input
+                                                type="text"
+                                                placeholder="A-Z"
+                                                maxLength={1}
+                                                value={filters.firstLetter}
+                                                onChange={(e) => setFilters({ ...filters, firstLetter: e.target.value })}
+                                                style={{
+                                                    width: '100%',
+                                                    padding: '12px',
+                                                    borderRadius: '8px',
+                                                    border: '1px solid var(--glass-border)',
+                                                    background: 'rgba(0,0,0,0.2)',
+                                                    color: '#fff',
+                                                    textAlign: 'center',
+                                                    textTransform: 'uppercase'
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Generate Button */}
+                                <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+                                    <button
+                                        className="btn-primary"
+                                        onClick={fetchNames} // Explicitly trigger fetch/scroll
+                                        style={{ minWidth: '200px', fontSize: '1.2rem' }}
+                                    >
+                                        Find Names
+                                    </button>
+                                </div>
+
+                            </div>
+                        )}
+
 
                         {/* Results Grid */}
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1.5rem' }}>
@@ -441,7 +397,7 @@ function App() {
                     </motion.div>
                 )}
             </AnimatePresence>
-        </div>
+        </div >
     );
 }
 
