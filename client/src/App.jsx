@@ -204,25 +204,26 @@ function App() {
                                     </h3>
                                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '1rem' }}>
                                         {[
-                                            { id: 'Nature', icon: <Leaf size={24} /> },
-                                            { id: 'Royal', icon: <Crown size={24} /> },
-                                            { id: 'Classic', icon: <BookOpen size={24} /> },
-                                            { id: 'Vintage', icon: <Hourglass size={24} /> },
-                                            { id: 'Literature', icon: <Feather size={24} /> },
-                                            { id: 'Celestial', icon: <Star size={24} /> },
-                                            { id: 'Cute', icon: <Smile size={24} /> },
-                                            { id: 'Flowers', icon: <Flower2 size={24} /> },
-                                            { id: 'Color', icon: <Palette size={24} /> },
-                                            { id: 'Unique', icon: <Sparkles size={24} /> },
+                                            { id: 'All Themes', value: '', icon: <Sparkles size={24} /> },
+                                            { id: 'Nature', value: 'Nature', icon: <Leaf size={24} /> },
+                                            { id: 'Royal', value: 'Royal', icon: <Crown size={24} /> },
+                                            { id: 'Classic', value: 'Classic', icon: <BookOpen size={24} /> },
+                                            { id: 'Vintage', value: 'Vintage', icon: <Hourglass size={24} /> },
+                                            { id: 'Literature', value: 'Literature', icon: <Feather size={24} /> },
+                                            { id: 'Celestial', value: 'Celestial', icon: <Star size={24} /> },
+                                            { id: 'Cute', value: 'Cute', icon: <Smile size={24} /> },
+                                            { id: 'Flowers', value: 'Flowers', icon: <Flower2 size={24} /> },
+                                            { id: 'Color', value: 'Color', icon: <Palette size={24} /> },
+                                            { id: 'Unique', value: 'Unique', icon: <Wand2 size={24} /> },
                                         ].map(theme => (
                                             <button
                                                 key={theme.id}
-                                                onClick={() => setFilters({ ...filters, theme: filters.theme === theme.id ? '' : theme.id })}
+                                                onClick={() => setFilters({ ...filters, theme: theme.value })}
                                                 style={{
                                                     padding: '1.5rem 1rem',
                                                     borderRadius: '16px',
                                                     border: '1px solid var(--glass-border)',
-                                                    background: filters.theme === theme.id ? 'var(--color-secondary)' : 'rgba(255,255,255,0.05)',
+                                                    background: filters.theme === theme.value ? 'var(--color-secondary)' : 'rgba(255,255,255,0.05)',
                                                     color: '#fff',
                                                     display: 'flex',
                                                     flexDirection: 'column',
@@ -321,7 +322,7 @@ function App() {
                                         onClick={fetchNames} // Explicitly trigger fetch/scroll
                                         style={{ minWidth: '200px', fontSize: '1.2rem' }}
                                     >
-                                        Find Names
+                                        Generate
                                     </button>
                                 </div>
 
