@@ -6,7 +6,8 @@
     "scripts": {
         "dev": "nodemon src/index.js",
         "start": "node src/index.js",
-        "test": "vitest"
+        "test": "vitest",
+        "seed": "node scripts/seed_names.js"
     },
     "dependencies": {
         "cors": "^2.8.5",
