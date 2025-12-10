@@ -202,33 +202,34 @@ function App() {
                                     <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.1rem' }}>
                                         <span style={{ color: 'var(--color-accent)' }}>2.</span> Choose a Theme
                                     </h3>
-                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '1rem' }}>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '1rem' }}>
                                         {[
-                                            { id: 'Nature', icon: <Leaf size={20} /> },
-                                            { id: 'Royal', icon: <Crown size={20} /> },
-                                            { id: 'Classic', icon: <BookOpen size={20} /> },
-                                            { id: 'Vintage', icon: <Hourglass size={20} /> },
-                                            { id: 'Literature', icon: <Feather size={20} /> },
-                                            { id: 'Celestial', icon: <Star size={20} /> },
-                                            { id: 'Cute', icon: <Smile size={20} /> },
-                                            { id: 'Flowers', icon: <Flower2 size={20} /> },
-                                            { id: 'Color', icon: <Palette size={20} /> },
-                                            { id: 'Unique', icon: <Sparkles size={20} /> },
+                                            { id: 'Nature', icon: <Leaf size={24} /> },
+                                            { id: 'Royal', icon: <Crown size={24} /> },
+                                            { id: 'Classic', icon: <BookOpen size={24} /> },
+                                            { id: 'Vintage', icon: <Hourglass size={24} /> },
+                                            { id: 'Literature', icon: <Feather size={24} /> },
+                                            { id: 'Celestial', icon: <Star size={24} /> },
+                                            { id: 'Cute', icon: <Smile size={24} /> },
+                                            { id: 'Flowers', icon: <Flower2 size={24} /> },
+                                            { id: 'Color', icon: <Palette size={24} /> },
+                                            { id: 'Unique', icon: <Sparkles size={24} /> },
                                         ].map(theme => (
                                             <button
                                                 key={theme.id}
                                                 onClick={() => setFilters({ ...filters, theme: filters.theme === theme.id ? '' : theme.id })}
                                                 style={{
-                                                    padding: '1rem 0.5rem',
-                                                    borderRadius: '12px',
+                                                    padding: '1.5rem 1rem',
+                                                    borderRadius: '16px',
                                                     border: '1px solid var(--glass-border)',
                                                     background: filters.theme === theme.id ? 'var(--color-secondary)' : 'rgba(255,255,255,0.05)',
                                                     color: '#fff',
                                                     display: 'flex',
                                                     flexDirection: 'column',
                                                     alignItems: 'center',
-                                                    gap: '0.5rem',
-                                                    fontSize: '0.9rem'
+                                                    gap: '0.8rem',
+                                                    fontSize: '1rem',
+                                                    transition: 'all 0.2s'
                                                 }}
                                             >
                                                 {theme.icon}

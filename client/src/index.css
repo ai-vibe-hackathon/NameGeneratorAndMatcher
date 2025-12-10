@@ -1,9 +1,12 @@
 :root {
   --color-bg: #0f0c29;
   --color-bg-gradient: linear-gradient(to right, #24243e, #302b63, #0f0c29);
-  --color-primary: #ffd700; /* Gold */
-  --color-secondary: #b76e79; /* Rose Gold */
-  --color-accent: #00d2ff; /* Cyan Glow */
+  --color-primary: #ffd700;
+  /* Gold */
+  --color-secondary: #b76e79;
+  /* Rose Gold */
+  --color-accent: #00d2ff;
+  /* Cyan Glow */
   --color-text: #ffffff;
   --color-text-muted: #a0a0a0;
   --glass-bg: rgba(255, 255, 255, 0.05);
@@ -34,7 +37,10 @@ body {
   flex-direction: column;
 }
 
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
   font-family: var(--font-serif);
   font-weight: 700;
 }
@@ -74,16 +80,24 @@ button {
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 1800px;
   margin: 0 auto;
   padding: 20px;
 }
 
 /* Animations */
 @keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0px); }
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
 }
 
 .animate-float {
