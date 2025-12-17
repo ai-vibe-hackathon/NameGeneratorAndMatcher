@@ -141,7 +141,10 @@ function App() {
                         {/* Sub-tabs for English / Chinese */}
                         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem', gap: '1rem' }}>
                             <button
-                                onClick={() => setGeneratorType('english')}
+                                onClick={() => {
+                                    setGeneratorType('english');
+                                    setFilters(prev => ({ ...prev, origin: '' }));
+                                }}
                                 style={{
                                     padding: '0.5rem 1.5rem',
                                     borderRadius: '20px',
@@ -153,7 +156,10 @@ function App() {
                                 English Names
                             </button>
                             <button
-                                onClick={() => setGeneratorType('chinese')}
+                                onClick={() => {
+                                    setGeneratorType('chinese');
+                                    setFilters(prev => ({ ...prev, origin: 'Chinese' }));
+                                }}
                                 style={{
                                     padding: '0.5rem 1.5rem',
                                     borderRadius: '20px',
@@ -168,7 +174,7 @@ function App() {
 
 
 
-                        {generatorType === 'english' && (
+                        {(generatorType === 'english' || generatorType === 'chinese') && (
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', width: '100%' }}>
 
                                 {/* Gender Section */}
@@ -247,24 +253,26 @@ function App() {
                                     </h3>
                                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
 
-                                        {/* Origin */}
-                                        <div>
-                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>Origin</label>
-                                            <select
-                                                value={filters.origin}
-                                                onChange={(e) => setFilters({ ...filters, origin: e.target.value })}
-                                                style={{ width: '100%', padding: '12px', borderRadius: '8px', background: 'rgba(0,0,0,0.2)', color: '#fff', border: '1px solid var(--glass-border)' }}
-                                            >
-                                                <option value="">All Origins</option>
-                                                <option value="Latin">Latin</option>
-                                                <option value="Greek">Greek</option>
-                                                <option value="Hebrew">Hebrew</option>
-                                                <option value="German">German</option>
-                                                <option value="French">French</option>
-                                                <option value="English">English</option>
-                                                <option value="Irish">Irish</option>
-                                            </select>
-                                        </div>
+                                        {/* Origin - Only show for English */}
+                                        {generatorType === 'english' && (
+                                            <div>
+                                                <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>Origin</label>
+                                                <select
+                                                    value={filters.origin}
+                                                    onChange={(e) => setFilters({ ...filters, origin: e.target.value })}
+                                                    style={{ width: '100%', padding: '12px', borderRadius: '8px', background: 'rgba(0,0,0,0.2)', color: '#fff', border: '1px solid var(--glass-border)' }}
+                                                >
+                                                    <option value="">All Origins</option>
+                                                    <option value="Latin">Latin</option>
+                                                    <option value="Greek">Greek</option>
+                                                    <option value="Hebrew">Hebrew</option>
+                                                    <option value="German">German</option>
+                                                    <option value="French">French</option>
+                                                    <option value="English">English</option>
+                                                    <option value="Irish">Irish</option>
+                                                </select>
+                                            </div>
+                                        )}
 
                                         {/* Length */}
                                         <div>

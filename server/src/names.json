@@ -183,7 +183,11 @@
         "gender": "male",
         "origin": "Chinese",
         "meaning": "Great, magnificent",
-        "themes": []
+        "themes": [
+            "Strong",
+            "Classic",
+            "Short"
+        ]
     },
     {
         "id": 17,
@@ -191,7 +195,11 @@
         "gender": "female",
         "origin": "Chinese",
         "meaning": "Beautiful",
-        "themes": []
+        "themes": [
+            "Beautiful",
+            "Nature",
+            "Short"
+        ]
     },
     {
         "id": 18,
@@ -199,7 +207,11 @@
         "gender": "male",
         "origin": "Chinese",
         "meaning": "Handsome, talented",
-        "themes": []
+        "themes": [
+            "Modern",
+            "Cute",
+            "Short"
+        ]
     },
     {
         "id": 19,
@@ -207,7 +219,11 @@
         "gender": "female",
         "origin": "Chinese",
         "meaning": "Fragrant",
-        "themes": []
+        "themes": [
+            "Flowers",
+            "Nature",
+            "Vintage"
+        ]
     },
     {
         "id": 20,
@@ -215,7 +231,11 @@
         "gender": "male",
         "origin": "Chinese",
         "meaning": "Bright, clear",
-        "themes": []
+        "themes": [
+            "Celestial",
+            "Modern",
+            "Short"
+        ]
     },
     {
         "id": 21,
@@ -223,7 +243,11 @@
         "gender": "female",
         "origin": "Chinese",
         "meaning": "Elegant, beautiful",
-        "themes": []
+        "themes": [
+            "Classic",
+            "Beautiful",
+            "Short"
+        ]
     },
     {
         "id": 22,
