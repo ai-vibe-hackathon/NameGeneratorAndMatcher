@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Heart, Search, RefreshCw, Wand2, Leaf, Crown, BookOpen, Hourglass, Feather, Star, Smile, Flower2, Palette } from 'lucide-react';
+import { Sparkles, Heart, Search, RefreshCw, Wand2, Leaf, Crown, BookOpen, Hourglass, Feather, Star, Smile, Flower2, Palette, User, Users } from 'lucide-react';
 import NameCard from './components/NameCard';
 import HarmonyMeter from './components/HarmonyMeter';
 
 function App() {
     const [activeTab, setActiveTab] = useState('generator');
     const [generatorType, setGeneratorType] = useState('english'); // 'english' or 'chinese'
+    const [useAI, setUseAI] = useState(false);
     const [names, setNames] = useState([]);
     const [filters, setFilters] = useState({
         gender: '',
@@ -18,40 +19,66 @@ function App() {
     });
     const [matchInput, setMatchInput] = useState({ name1: '', name2: '' });
     const [matchResult, setMatchResult] = useState(null);
+    const [teamInput, setTeamInput] = useState({ keywords: '', vibe: '' });
+    const [teamNames, setTeamNames] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
+    const resultsRef = useRef(null);
 
     // Fetch names
     useEffect(() => {
         fetchNames();
-    }, [filters]);
+    }, [filters, generatorType]); // Removed useAI from dependencies
 
     const fetchNames = async () => {
-        const params = new URLSearchParams();
-        if (filters.gender) params.append('gender', filters.gender);
-        if (filters.origin) params.append('origin', filters.origin);
-        if (filters.search) params.append('search', filters.search);
-        if (filters.theme) params.append('theme', filters.theme);
-        if (filters.length) params.append('length', filters.length);
-        if (filters.firstLetter) params.append('firstLetter', filters.firstLetter);
-
-        // If in Chinese mode, we might want to filter by origin 'Chinese' automatically or handle it in UI
-        // For now, let's fetch all and filter client side or let the user filter.
-        // Actually, let's pass the type to the backend or filter here.
-        // Let's filter client-side for simplicity since we have all names.
-
+        setLoading(true);
+        setError(null);
         try {
-            const res = await fetch(`http://localhost:3000/api/names?${params}`);
-            const data = await res.json();
+            let url = 'http://localhost:3000/api/names';
+            let options = {};
 
-            // Client-side filtering for the section
-            const filtered = data.filter(n => {
-                if (generatorType === 'chinese') return n.origin === 'Chinese';
-                return n.origin !== 'Chinese';
-            });
+            if (useAI) {
+                url = 'http://localhost:3000/api/generate';
+                options = {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(filters)
+                };
+            } else {
+                const params = new URLSearchParams();
+                if (filters.gender) params.append('gender', filters.gender);
+                if (filters.origin) params.append('origin', filters.origin);
+                if (filters.search) params.append('search', filters.search);
+                if (filters.theme) params.append('theme', filters.theme);
+                if (filters.length) params.append('length', filters.length);
+                if (filters.firstLetter) params.append('firstLetter', filters.firstLetter);
+                url = `${url}?${params.toString()}`;
+            }
 
-            setNames(filtered);
-        } catch (err) {
-            console.error("Failed to fetch names", err);
+            const response = await fetch(url, options);
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to fetch names');
+            }
+
+            if (Array.isArray(data)) {
+                setNames(data);
+                setCurrentPage(1); // Reset to first page on new search
+            } else {
+                throw new Error('Invalid data format received');
+            }
+
+
+        } catch (error) {
+            console.error('Error fetching names:', error);
+            setError(error.message);
+            // Keep previous names if AI fails, or clear? Let's clear to avoid confusion if it's a new search
+            if (useAI) setNames([]);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -80,6 +107,29 @@ function App() {
         }
     };
 
+    const handleTeamGenerate = async (e) => {
+        e.preventDefault();
+        if (!teamInput.keywords) return;
+
+        setLoading(true);
+        setTeamNames([]);
+        try {
+            const res = await fetch('http://localhost:3000/api/team-names', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(teamInput)
+            });
+            const data = await res.json();
+            if (Array.isArray(data)) {
+                setTeamNames(data);
+            }
+        } catch (err) {
+            console.error("Failed to generate team names", err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="container">
             <header style={{ textAlign: 'center', padding: '4rem 0 2rem' }}>
@@ -88,8 +138,8 @@ function App() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
                 >
-                    <h1 style={{ fontSize: '3.5rem', marginBottom: '0.5rem', background: 'linear-gradient(to right, #fff, #ffd700)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                        Name Harmony
+                    <h1 style={{ fontSize: '3.5rem', marginBottom: '1rem', background: 'linear-gradient(to right, #fff, #a5b4fc)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                        Name Generator and Matcher
                     </h1>
                     <p style={{ fontSize: '1.2rem', color: 'var(--color-text-muted)' }}>
                         Discover the perfect name or find your cosmic connection.
@@ -125,7 +175,21 @@ function App() {
                         color: activeTab === 'match' ? 'var(--color-secondary)' : 'var(--color-text)'
                     }}
                 >
-                    <Heart size={18} /> Compatibility Match
+                    <Heart size={18} /> Name Matcher
+                </button>
+                <button
+                    className={`glass-panel ${activeTab === 'team' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('team')}
+                    style={{
+                        padding: '1rem 2rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        background: activeTab === 'team' ? 'rgba(255,255,255,0.15)' : 'transparent',
+                        color: activeTab === 'team' ? 'var(--color-accent)' : 'var(--color-text)'
+                    }}
+                >
+                    <Users size={18} /> Team Name Generator
                 </button>
             </div>
 
@@ -221,6 +285,7 @@ function App() {
                                             { id: 'Flowers', value: 'Flowers', icon: <Flower2 size={24} /> },
                                             { id: 'Color', value: 'Color', icon: <Palette size={24} /> },
                                             { id: 'Unique', value: 'Unique', icon: <Wand2 size={24} /> },
+                                            { id: 'Character', value: 'Character', icon: <User size={24} /> },
                                         ].map(theme => (
                                             <button
                                                 key={theme.id}
@@ -323,34 +388,128 @@ function App() {
                                     </div>
                                 </div>
 
+                                {/* AI Toggle */}
+                                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+                                    <button
+                                        onClick={() => setUseAI(!useAI)}
+                                        style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '0.5rem',
+                                            padding: '0.8rem 1.5rem',
+                                            borderRadius: '20px',
+                                            background: useAI ? 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)' : 'rgba(255,255,255,0.1)',
+                                            border: '1px solid var(--glass-border)',
+                                            color: '#fff',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.3s ease'
+                                        }}
+                                    >
+                                        <Sparkles size={18} />
+                                        {useAI ? 'AI Generation Enabled' : 'Enable AI Generation'}
+                                    </button>
+                                </div>
+
                                 {/* Generate Button */}
                                 <div style={{ textAlign: 'center', marginTop: '1rem' }}>
                                     <button
                                         className="btn-primary"
                                         onClick={fetchNames} // Explicitly trigger fetch/scroll
                                         style={{ minWidth: '200px', fontSize: '1.2rem' }}
+                                        disabled={loading}
                                     >
-                                        Generate
+                                        {loading ? <RefreshCw className="animate-spin" /> : 'Generate'}
                                     </button>
                                 </div>
+
+                                {/* Error Message */}
+                                {error && (
+                                    <div style={{
+                                        marginTop: '1.5rem',
+                                        padding: '1rem',
+                                        background: 'rgba(255, 0, 0, 0.1)',
+                                        border: '1px solid rgba(255, 0, 0, 0.3)',
+                                        borderRadius: '12px',
+                                        color: '#ffcccc',
+                                        textAlign: 'center'
+                                    }}>
+                                        <p style={{ fontWeight: 'bold', marginBottom: '0.5rem' }}>Generation Failed</p>
+                                        <p style={{ fontSize: '0.9rem' }}>{error}</p>
+                                        {useAI && <p style={{ fontSize: '0.8rem', marginTop: '0.5rem', opacity: 0.8 }}>Try disabling AI generation or checking your API key.</p>}
+                                    </div>
+                                )}
 
                             </div>
                         )}
 
 
                         {/* Results Grid */}
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1.5rem' }}>
-                            {names.map(name => (
-                                <NameCard key={name.id} {...name} />
-                            ))}
+                        <div ref={resultsRef} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1.5rem' }}>
+                            {loading ? (
+                                // Skeleton Loading State
+                                Array.from({ length: 8 }).map((_, index) => (
+                                    <div key={`skeleton-${index}`} className="glass-panel" style={{ height: '200px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', animation: 'pulse 1.5s infinite ease-in-out' }}>
+                                        <div style={{ width: '60%', height: '24px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', marginBottom: '1rem' }}></div>
+                                        <div style={{ width: '40%', height: '16px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', marginBottom: '0.5rem' }}></div>
+                                        <div style={{ width: '80%', height: '16px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px' }}></div>
+                                    </div>
+                                ))
+                            ) : (
+                                names.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map(name => (
+                                    <NameCard key={name.id} {...name} />
+                                ))
+                            )}
                         </div>
+
+                        {/* Pagination Controls */}
+                        {!loading && names.length > itemsPerPage && (
+                            <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '2rem' }}>
+                                <button
+                                    onClick={() => {
+                                        setCurrentPage(p => Math.max(1, p - 1));
+                                        resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                    }}
+                                    disabled={currentPage === 1}
+                                    style={{
+                                        padding: '0.8rem 1.5rem',
+                                        borderRadius: '12px',
+                                        background: currentPage === 1 ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.1)',
+                                        border: '1px solid var(--glass-border)',
+                                        color: currentPage === 1 ? 'var(--color-text-muted)' : '#fff',
+                                        cursor: currentPage === 1 ? 'not-allowed' : 'pointer'
+                                    }}
+                                >
+                                    Previous
+                                </button>
+                                <span style={{ display: 'flex', alignItems: 'center', color: 'var(--color-text-muted)' }}>
+                                    Page {currentPage} of {Math.ceil(names.length / itemsPerPage)}
+                                </span>
+                                <button
+                                    onClick={() => {
+                                        setCurrentPage(p => Math.min(Math.ceil(names.length / itemsPerPage), p + 1));
+                                        resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                    }}
+                                    disabled={currentPage === Math.ceil(names.length / itemsPerPage)}
+                                    style={{
+                                        padding: '0.8rem 1.5rem',
+                                        borderRadius: '12px',
+                                        background: currentPage === Math.ceil(names.length / itemsPerPage) ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.1)',
+                                        border: '1px solid var(--glass-border)',
+                                        color: currentPage === Math.ceil(names.length / itemsPerPage) ? 'var(--color-text-muted)' : '#fff',
+                                        cursor: currentPage === Math.ceil(names.length / itemsPerPage) ? 'not-allowed' : 'pointer'
+                                    }}
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        )}
                         {names.length === 0 && (
                             <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--color-text-muted)' }}>
                                 No names found matching your criteria.
                             </div>
                         )}
                     </motion.div>
-                ) : (
+                ) : activeTab === 'match' ? (
                     <motion.div
                         key="match"
                         initial={{ opacity: 0, x: 20 }}
@@ -360,7 +519,7 @@ function App() {
                         style={{ maxWidth: '600px', margin: '0 auto' }}
                     >
                         <div className="glass-panel" style={{ padding: '2rem' }}>
-                            <h2 style={{ textAlign: 'center', marginBottom: '2rem' }}>Check Compatibility</h2>
+                            <h2 style={{ textAlign: 'center', marginBottom: '2rem' }}>Name Matcher</h2>
                             <form onSubmit={handleMatch} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                                 <div>
                                     <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--color-text-muted)' }}>First Name</label>
@@ -390,7 +549,7 @@ function App() {
 
                                 <button type="submit" className="btn-primary" style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
                                     {loading ? <RefreshCw className="animate-spin" /> : <Wand2 size={20} />}
-                                    Calculate Harmony
+                                    Calculate Matcher Score
                                 </button>
                             </form>
                         </div>
@@ -405,7 +564,79 @@ function App() {
                             </motion.div>
                         )}
                     </motion.div>
-                )}
+                ) : activeTab === 'team' ? (
+                    <motion.div
+                        key="team"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ duration: 0.3 }}
+                        style={{ maxWidth: '800px', margin: '0 auto' }}
+                    >
+                        <div className="glass-panel" style={{ padding: '2rem' }}>
+                            <h2 style={{ textAlign: 'center', marginBottom: '2rem' }}>Team Name Generator</h2>
+                            <form onSubmit={handleTeamGenerate} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--color-text-muted)' }}>Keywords / Description</label>
+                                    <input
+                                        type="text"
+                                        value={teamInput.keywords}
+                                        onChange={(e) => setTeamInput({ ...teamInput, keywords: e.target.value })}
+                                        style={{ width: '100%', padding: '12px', borderRadius: '8px', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', color: '#fff', fontSize: '1.1rem' }}
+                                        placeholder="e.g. coding, speed, future, innovation"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--color-text-muted)' }}>Vibe</label>
+                                    <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                                        {['Professional', 'Creative', 'Edgy', 'Fun', 'Minimalist'].map(v => (
+                                            <button
+                                                key={v}
+                                                type="button"
+                                                onClick={() => setTeamInput({ ...teamInput, vibe: v })}
+                                                style={{
+                                                    padding: '0.8rem 1.5rem',
+                                                    borderRadius: '20px',
+                                                    background: teamInput.vibe === v ? 'var(--color-primary)' : 'rgba(255,255,255,0.05)',
+                                                    border: '1px solid var(--glass-border)',
+                                                    color: teamInput.vibe === v ? '#000' : '#fff',
+                                                    cursor: 'pointer',
+                                                    transition: 'all 0.2s'
+                                                }}
+                                            >
+                                                {v}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <button type="submit" className="btn-primary" style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
+                                    {loading ? <RefreshCw className="animate-spin" /> : <Sparkles size={20} />}
+                                    Generate Team Names
+                                </button>
+                            </form>
+                        </div>
+
+                        {teamNames.length > 0 && (
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1.5rem', marginTop: '2rem' }}>
+                                {teamNames.map((item, index) => (
+                                    <motion.div
+                                        key={index}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: index * 0.1 }}
+                                        className="glass-panel"
+                                        style={{ padding: '1.5rem', textAlign: 'center' }}
+                                    >
+                                        <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', color: '#fff' }}>{item.name}</h3>
+                                        <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>{item.meaning}</p>
+                                    </motion.div>
+                                ))}
+                            </div>
+                        )}
+                    </motion.div>
+                ) : null}
             </AnimatePresence>
         </div >
     );

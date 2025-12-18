@@ -58,7 +58,7 @@ const HarmonyMeter = ({ score, details }) => {
                 </div>
             </div>
 
-            <h3 style={{ marginTop: '1rem', color: 'var(--color-primary)' }}>Harmony Score</h3>
+            <h3 style={{ marginTop: '1rem', color: 'var(--color-primary)' }}>Matcher Score</h3>
 
             <div style={{ marginTop: '1.5rem', textAlign: 'left' }}>
                 {details.map((detail, index) => (
